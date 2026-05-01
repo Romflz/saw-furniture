@@ -5,9 +5,22 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
 const props = defineProps<{
   color: string
-  size: number
+  width: number
+  height: number
+  depth: number
   bgColor: string
 }>()
+
+// Pin the -x/-y/-z face so the cube grows outward on each axis.
+const applyDimensions = () => {
+  if (!cube) return
+  cube.scale.set(props.width, props.height, props.depth)
+  cube.position.set(
+    0.5 * (props.width - 1),
+    0.5 * (props.height - 1),
+    0.5 * (props.depth - 1),
+  )
+}
 
 const container = ref<HTMLDivElement | null>(null)
 
@@ -79,7 +92,7 @@ onMounted(() => {
     metalness: 0.05,
   })
   cube = new THREE.Mesh(geometry, material)
-  cube.scale.setScalar(props.size)
+  applyDimensions()
   scene.add(cube)
 
   // OrbitControls: drag to rotate, scroll to zoom, right-click to pan.
@@ -122,10 +135,8 @@ watch(
 )
 
 watch(
-  () => props.size,
-  (next) => {
-    cube?.scale.setScalar(next)
-  },
+  () => [props.width, props.height, props.depth],
+  () => applyDimensions(),
 )
 
 watch(

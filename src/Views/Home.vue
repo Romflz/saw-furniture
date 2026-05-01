@@ -21,8 +21,16 @@ const backdrops = [
 ]
 
 const color = ref(woodTones[0].value)
-const size = ref(1)
+const width = ref(1)
+const height = ref(1)
+const depth = ref(1)
 const bgColor = ref(backdrops[0].value)
+
+const dimensionAxes = [
+  { label: 'Width', model: width },
+  { label: 'Height', model: height },
+  { label: 'Depth', model: depth },
+] as const
 </script>
 
 <template>
@@ -45,7 +53,13 @@ const bgColor = ref(backdrops[0].value)
       <div
         class="relative h-[55vh] min-h-72 overflow-hidden rounded-xl bg-stone-900 shadow-md ring-1 ring-stone-200 sm:h-[60vh] sm:rounded-2xl sm:shadow-lg lg:h-[70vh]"
       >
-        <CubeViewer :color="color" :size="size" :bg-color="bgColor" />
+        <CubeViewer
+          :color="color"
+          :width="width"
+          :height="height"
+          :depth="depth"
+          :bg-color="bgColor"
+        />
         <div
           class="pointer-events-none absolute bottom-2 left-2 rounded-md bg-black/45 px-2 py-1 text-[10px] font-medium text-white/85 backdrop-blur sm:bottom-3 sm:left-3 sm:px-2.5 sm:text-[11px]"
         >
@@ -133,23 +147,30 @@ const bgColor = ref(backdrops[0].value)
         </div>
 
         <div>
-          <div class="mb-3 flex items-baseline justify-between">
-            <h2 class="text-sm font-semibold text-stone-900">Dimensions</h2>
-            <span class="font-mono text-xs text-stone-500">
-              {{ size.toFixed(2) }}m
-            </span>
-          </div>
-          <input
-            v-model.number="size"
-            type="range"
-            min="0.4"
-            max="2.5"
-            step="0.05"
-            class="h-2 w-full cursor-pointer accent-amber-700"
-          />
-          <div class="mt-1 flex justify-between text-[11px] text-stone-400">
-            <span>0.4m</span>
-            <span>2.5m</span>
+          <h2 class="mb-3 text-sm font-semibold text-stone-900">Dimensions</h2>
+          <div class="space-y-4">
+            <div v-for="axis in dimensionAxes" :key="axis.label">
+              <div class="mb-1 flex items-baseline justify-between">
+                <span class="text-xs font-medium text-stone-600">
+                  {{ axis.label }}
+                </span>
+                <span class="font-mono text-xs text-stone-500">
+                  {{ axis.model.value.toFixed(2) }}m
+                </span>
+              </div>
+              <input
+                v-model.number="axis.model.value"
+                type="range"
+                min="0.4"
+                max="2.5"
+                step="0.05"
+                class="h-2 w-full cursor-pointer accent-amber-700"
+              />
+              <div class="mt-1 flex justify-between text-[11px] text-stone-400">
+                <span>0.4m</span>
+                <span>2.5m</span>
+              </div>
+            </div>
           </div>
         </div>
 
